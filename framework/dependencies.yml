@@ -94,7 +94,7 @@ repositories:
             - homeModules:
                 type:       local
                 descriptor: "${user.home}/play/modules/play/[module]-[revision]/conf/dependencies.yml"
-                descriptor: "${user.home}/play/modules/play/[module]-[revision]"
+                artifact: "${user.home}/play/modules/play/[module]-[revision]"
 
             - playLocalModules:
                 type:       local
