@@ -86,10 +86,10 @@ repositories:
     - playModules:  
         type:       chain
         using:            
-            - homeGoogleClosure:
+            - homeModulesDeep:
                 type:       local
-                descriptor: "${user.home}/play/modules/play/googleclosure-1.2/[module]/conf/dependencies.yml"
-                artifact: "${user.home}/play/modules/play/googleclosure-1.2/[module]"
+                descriptor: "${user.home}/play/modules/play/[module]-[revision]/[module]/conf/dependencies.yml"
+                artifact: "${user.home}/play/modules/play/[module]-[revision]/[module]/"
 
             - homeModules:
                 type:       local
