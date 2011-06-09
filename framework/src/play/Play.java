@@ -172,6 +172,11 @@ public class Play {
     public static boolean lazyLoadTemplates = false;
 
     /**
+     * This is used as default encoding everywhere related to the web: request, response, WS
+     */
+    public static String defaultWebEncoding = "utf-8";
+
+    /**
      * Init the framework
      *
      * @param root The application path
@@ -459,6 +464,20 @@ public class Play {
                 Logger.warn("No secret key defined. Sessions will not be encrypted");
             }
 
+            // Default web encoding
+            String _defaultWebEncoding = configuration.getProperty("application.web_encoding");
+            if( _defaultWebEncoding != null ) {
+                Logger.info("Using custom default web encoding: " + _defaultWebEncoding);
+                defaultWebEncoding = _defaultWebEncoding;
+                // Must update current response also, since the request/response triggering
+                // this configuration-loading in dev-mode have already been
+                // set up with the previous encoding
+                if( Http.Response.current() != null ) {
+                    Http.Response.current().encoding = _defaultWebEncoding;
+                }
+            }
+
+
             // Try to load all classes
             Play.classloader.getAllClasses();
 
@@ -495,9 +514,11 @@ public class Play {
 
         } catch (PlayException e) {
             started = false;
+            try { Cache.stop(); } catch (Exception ignored) {}
             throw e;
         } catch (Exception e) {
             started = false;
+            try { Cache.stop(); } catch (Exception ignored) {}
             throw new UnexpectedException(e);
         }
     }
@@ -635,7 +656,11 @@ public class Play {
                     if (!modulePath.exists() || !modulePath.isDirectory()) {
                         Logger.error("Module %s will not be loaded because %s does not exist", modulePath.getName(), modulePath.getAbsolutePath());
                     } else {
-                        addModule(modulePath.getName(), modulePath);
+                        final String modulePathName = modulePath.getName();
+                        final String moduleName = modulePathName.contains("-") ?
+                                modulePathName.substring(0, modulePathName.lastIndexOf("-")) :
+                                modulePathName;
+                        addModule(moduleName, modulePath);
                     }
                 }
             }
