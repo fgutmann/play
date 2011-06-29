@@ -212,14 +212,12 @@ def autotest(app, args):
             sys.exit(-1)
         line = soutint.readline().strip()
         if line:
-            print line
-            if line.find('/@tests to run the tests') > -1:
+            if line.find('Listening for HTTP') > -1:
                 soutint.close()
                 break
+            print line
 
     # Run FirePhoque
-    print "~"
-
     fpcp = [os.path.join(app.play_env["basedir"], 'modules/testrunner/lib/play-testrunner.jar')]
     fpcp_libs = os.path.join(app.play_env["basedir"], 'modules/testrunner/firephoque')
     for jar in os.listdir(fpcp_libs):
