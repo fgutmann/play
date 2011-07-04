@@ -29,6 +29,11 @@ import play.vfs.VirtualFile;
 
 public class Evolutions extends PlayPlugin {
 
+	/**
+	 * Indicates if evolutions is disabled in application.conf ("evolutions.enabled" property)
+	 */
+	private boolean disabled = false;
+
     public static void main(String[] args) {
 
         /** Check that evolutions are enabled **/
@@ -181,7 +186,11 @@ public class Evolutions extends PlayPlugin {
 
     @Override
     public void beforeInvocation() {
+<<<<<<< HEAD
+        if(disabled || Play.mode.isProd()) {
+=======
         if(isDisabled() || Play.mode.isProd()) {
+>>>>>>> upstream/1.2.x
             return;
         }
         try {
@@ -198,7 +207,13 @@ public class Evolutions extends PlayPlugin {
 
     @Override
     public void onApplicationStart() {
+<<<<<<< HEAD
+    	disabled = "false".equals(Play.configuration.getProperty("evolutions.enabled", "true"));
+    	
+        if (! disabled && Play.mode.isProd()) {
+=======
         if (!isDisabled() && Play.mode.isProd()) {
+>>>>>>> upstream/1.2.x
             try {
                 checkEvolutionsState();
             } catch (InvalidDatabaseRevision e) {
@@ -208,13 +223,6 @@ public class Evolutions extends PlayPlugin {
                 throw e;
             }
         }
-    }
-
-    /**
-     * Checks if evolutions is disabled in application.conf (property "evolutions.enabled")
-     */
-    private boolean isDisabled() {
-        return "false".equals(Play.configuration.getProperty("evolutions.enabled", "true"));
     }
     
     public static synchronized void resolve(int revision) {
