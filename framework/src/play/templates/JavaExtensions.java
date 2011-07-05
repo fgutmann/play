@@ -156,13 +156,13 @@ public class JavaExtensions {
     }
 
     public static String format(Number number, String pattern) {
-        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Lang.getLocale());
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols(new Locale(Lang.get()));
         return new DecimalFormat(pattern, symbols).format(number);
     }
 
     public static String format(Date date) {
         // Get the pattern from the configuration
-        return format(date, I18N.getDateFormat());
+        return new SimpleDateFormat(I18N.getDateFormat()).format(date);
     }
 
     public static String format(Date date, String pattern) {
@@ -170,11 +170,11 @@ public class JavaExtensions {
     }
 
     public static String format(Date date, String pattern, String lang) {
-        return new SimpleDateFormat(pattern, Lang.getLocaleOrDefault(lang)).format(date);
+        return new SimpleDateFormat(pattern, new Locale(lang)).format(date);
     }
 
     public static String format(Date date, String pattern, String lang, String timezone) {
-        DateFormat df = new SimpleDateFormat(pattern, Lang.getLocaleOrDefault(lang));
+        DateFormat df = new SimpleDateFormat(pattern, new Locale(lang));
         df.setTimeZone(TimeZone.getTimeZone(timezone));
         return df.format(date);
     }
@@ -219,16 +219,12 @@ public class JavaExtensions {
         return Messages.get("since.years", years, pluralize(years));
     }
 
-    public static String asdate(Long timestamp) {
-        return asdate(timestamp, I18N.getDateFormat());
-    }
-    
     public static String asdate(Long timestamp, String pattern) {
         return asdate(timestamp, pattern, Lang.get());
     }
 
     public static String asdate(Long timestamp, String pattern, String lang) {
-        return new SimpleDateFormat(pattern, Lang.getLocaleOrDefault(lang)).format(new Date(timestamp));
+        return new SimpleDateFormat(pattern, new Locale(lang)).format(new Date(timestamp));
     }
 
     public static String asdate(Long timestamp, String pattern, String lang, String timezone) {
@@ -260,10 +256,10 @@ public class JavaExtensions {
         }
         return bytes / 1073741824L + "GB";
     }
-    
+
     public static String formatCurrency(Number number, String currencyCode) {
         Currency currency = Currency.getInstance(currencyCode);
-        NumberFormat numberFormat = NumberFormat.getCurrencyInstance(Lang.getLocale());
+        NumberFormat numberFormat = NumberFormat.getCurrencyInstance(new Locale(Lang.get()));
         numberFormat.setCurrency(currency);
         numberFormat.setMaximumFractionDigits(currency.getDefaultFractionDigits());
         String s = numberFormat.format(number);
