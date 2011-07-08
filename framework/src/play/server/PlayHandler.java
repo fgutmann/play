@@ -151,14 +151,16 @@ public class PlayHandler extends SimpleChannelUpstreamHandler {
             Logger.trace("init: begin");
             Request.current.set(request);
             Response.current.set(response);
+            
+            String cacheKey = request.domain + request.path;
             try {
                 if (Play.mode == Play.Mode.DEV) {
                     Router.detectChanges(Play.ctxPath);
                 }
-                if (Play.mode == Play.Mode.PROD && staticPathsCache.containsKey(request.path)) {
+                if (Play.mode == Play.Mode.PROD && staticPathsCache.containsKey(cacheKey)) {
                     RenderStatic rs = null;
                     synchronized (staticPathsCache) {
-                        rs = staticPathsCache.get(request.path);
+                        rs = staticPathsCache.get(cacheKey);
                     }
                     serveStatic(rs, ctx, request, response, nettyRequest, event);
                     Logger.trace("init: end false");
@@ -173,7 +175,7 @@ public class PlayHandler extends SimpleChannelUpstreamHandler {
             } catch (RenderStatic rs) {
                 if (Play.mode == Play.Mode.PROD) {
                     synchronized (staticPathsCache) {
-                        staticPathsCache.put(request.path, rs);
+                        staticPathsCache.put(cacheKey, rs);
                     }
                 }
                 serveStatic(rs, ctx, request, response, nettyRequest, this.event);
