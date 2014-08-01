@@ -15,6 +15,8 @@ import play.utils.Java;
 public class ValidCheck extends AbstractAnnotationCheck<Required> {
 
     final static String mes = "validation.object";
+    private static final Validator validator = new Validator();
+    
     String key;
 
     public boolean isSatisfied(Object validatedObject, Object value, OValContext context, Validator validator) {
@@ -63,7 +65,7 @@ public class ValidCheck extends AbstractAnnotationCheck<Required> {
 
     boolean validateObject(String key, Object value) {
         ValidationPlugin.keys.get().put(value, key);
-        List<ConstraintViolation> violations = new Validator().validate(value);
+        List<ConstraintViolation> violations = validator.validate(value);
         //
         if (violations.isEmpty()) {
             return true;
